@@ -1,0 +1,92 @@
+(if (= 1 1)
+ (print hi)
+ (print bye))
+
+(eval expr)
+  (if (is-atom expr)
+      (lookup expr)
+      (expr))
+
+  Given that the standard eager-evaluated argument list to a function may be interpretted as
+  the usual interpreation of those lexical tokens, how might we interpret the inline-appending
+  of an argument list variable in the context of these functional computational models at large (
+  perhaps while understanding that they may be considered to be well-distilled by stack machines).
+  And when considering the semantics of those lexical tokens, how might one understand an
+  inline-appending of an argument eagerly-expanded and appended upon evaluating the functional call?
+
+Lexical macros: Programatic method of specifying and destructuring lexical patterns
+
+  Nth way of copying a frame
+  Nth way of collapsing a frame (selecting only one item and discarding the rest) as
+    an alternative for TRUE and FALSE
+     Conditional instructions could then be interpretted as a sort of "return" maybe
+  How to delimit frames? Frame sizes could be implicitly included in a COLLAPSE instruction
+
+  Purpose of hierarchical frames (in the context of stack machine processing and
+    frame-based (cons list as one whole frame) style of locals and returning.
+    - more flexible way of creating and working with callbacks
+    - how might this apply to meta-style processing (considering each compuational
+      layer (of callbacks in essence?) as a meta-computation)?
+
+  Expanding an s-expression is then a creation of a new meta-computational frame. This
+    seems to generalize the notion of meta-expansion in a mechanistic manner.
+  A machine instruction seems to be an atomic node, a possible collapse of meta-expansion
+    up into a higher meta-level.
+
+  LIST or CONS instructions?
+
+  How might a conditional be interpretted as a closure in the context of the macro machine?
+    Given that both a closure and a conditional (if defined to be what it is now) necessarily
+    will involve a switch between stack and code domains.
+  
+
+(macro (if cond then else)
+ (EVAL)
+ (EXPAND))
+
+CAR
+CDR
+COPY <nth>
+RETURN <start> <end>
+
+(macro (car x)
+  (FRAME 1)
+  (RETURN 0))
+
+(macro (cdr x)
+  (FRAME 1)
+  (RETURN 1 -1))
+
+(macro (scopy n)
+  (RETURN n)
+  
+
+(macro (macro spec body)
+  (COPY 0)
+  (COPY 1)
+  (FRAME 1)
+  (RETURN 0)
+  (COPY 1)
+  (FRAME 1)
+  (RETURN 1 -1)
+  (DEFINE))
+  
+  (let ((macro-name (car spec))
+        (macro-args (cdr spec)))
+    (PUSH '(,macro-name ,macro-args ,body))
+    (DEFINE)
+
+
+// The Implicitly Defined Initial Macro
+// (macro (meta-machine MacroSymbol MacroForm MacroProcess)
+//   (DEFINE))
+
+(meta-machine (macro spec body) <body>)
+
+(macro (car x)
+  (FRAME 1)
+  (RETURN 0))
+
+(macro (cdr x)
+  (FRAME 1)
+  (RETURN 1 -1))

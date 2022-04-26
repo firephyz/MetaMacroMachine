@@ -1,0 +1,22 @@
+[package]
+name = "syms"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1"
+
+# callback style of thinking about Results and chaining them; allows for callback style
+#   of back-to-back conditional evaluation. Each Result "contains" the results of some
+#   conditional evaluation and chaining them computes on those results. This is a sort of
+#   eager-style of conditional chaining as opposed to callbacks which would be lazy.
+# Result chains (and options too maybe). Difference between situations:
+#   - produce Ok of first caller, Err of last caller
+#   - produce Err of first caller, Ok of last caller
+#   - produce Err of first caller, Err of last caller; else None or something
+#   - produce Ok of first caller, Ok of last caller ; doesn't make much sense, earlier okays
+#   - produce Err of first caller or Ok of first caller if no Errs of subsequent callers
+#     - early drop-out error conditions, Ok at end
+#   - etc...
