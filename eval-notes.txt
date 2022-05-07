@@ -38,16 +38,48 @@ Lexical macros: Programatic method of specifying and destructuring lexical patte
   How might a conditional be interpretted as a closure in the context of the macro machine?
     Given that both a closure and a conditional (if defined to be what it is now) necessarily
     will involve a switch between stack and code domains.
-  
+
+  Difference between a traditional stack machine and a "recursive machine" that's brought
+    about using this .CONTEXT save and restore style of handling entire computation stacks?
+    This seems to naturally give way to a machine that itself recursively computes on
+    whole computations/callbacks, rather than relying on a stack.
+
+  What can be done with the machine without any symbolic functions?
+    - obviously no runtime construction of frames; no closures then?
+
+  Implentation of true and false.
+    - Can use the runtime frame method (booleans are essentially functions) to conditionally
+      execute one if branch or the other. Likely requires CONTEXT functionality
+    - Encode true and false as a symbolic macro that expands things given to it.
+
+
+
+  Language Notes:
+    Elementary components of an "augmented" function call. Rust for example identifies an implicit
+      borrow that occurs when we use the dot operator to access a member function. How might we add
+      to the concept of a function call to specify the "way in which the function call is to happen".
+        - An into_iter function for example captures the object that it's called on, it is a functional
+	  "consumer".
+    Idea, implicit type dependence resolution on places (i.e. function calls) that require a certain
+      type (from another function call perhaps, but how else might this functionality exist?). Considered
+      when trying to "unpackage" a function return value into some contained piece of data that was dependent
+      on the type of enum the function was passed (passing enum inner data to function call). This might
+      be another way to implement dynamic types, the program would panic if the type didn't satisfy the
+      requirements.
+        - MetaElement::try_from(item.into_inner_early().unwrap())
+	  There was also an into_inner() function available but that would have interpreted it as the
+	    incorrect enum and returned the wrong type to try_from. The 'item' should have been implemented
+	    using dynamic types anyway...
+
+
 
 (macro (if cond then else)
- (EVAL)
- (EXPAND))
+  (.EXPAND)
+  (.INDEX 0 1)
+  (.EXPAND))
 
-CAR
-CDR
-COPY <nth>
-RETURN <start> <end>
+(macro (if cond then else)
+  (cond then else))
 
 (macro (car x)
   (FRAME 1)
@@ -59,17 +91,23 @@ RETURN <start> <end>
 
 (macro (scopy n)
   (RETURN n)
-  
+
+.FRAME N [arg]
+  - with arg, selects arg within frame N
+  - without arg, selects frame N as active frame
+.CONTEXT [RANGE]
+  - with RANGE, collapses frames in RANGE into arg on stack on previous frame, and starts execution there
+  - without RANGE, uses the next argument to restore context with (similar to function call)
 
 (macro (macro spec body)
-  (COPY 0)
-  (COPY 1)
-  (FRAME 1)
-  (RETURN 0)
-  (COPY 1)
-  (FRAME 1)
-  (RETURN 1 -1)
-  (DEFINE))
+  (.INDEX 0 0)
+  (.INDEX 0 1)
+  (.CONTEXT)
+  (.RETURN 0)
+  (.INDEX 0 1)
+  (.CONTEXT)
+  (.RETURN 1 -1)
+  (.DEFINE))
   
   (let ((macro-name (car spec))
         (macro-args (cdr spec)))
